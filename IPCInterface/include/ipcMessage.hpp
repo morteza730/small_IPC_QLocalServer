@@ -4,7 +4,7 @@
 #include <QJsonDocument>
 #include <QJsonObject>
 
-#include "global.hpp"
+#include "ipcExport.hpp"
 
 enum class CommandMode
 {

@@ -1,9 +1,9 @@
 #include "clientProxy.hpp"
-
+#include "clientInternal.hpp"
 
 ipc::ClientProxy::ClientProxy(const QString &UID)
     : ClientInterface(UID),
-    m_clientInternal{new ClientInternal{UID}}
+    m_clientInternal{std::make_unique<ClientInternal>(UID)}
 {
     connect(m_clientInternal.get(),&ClientInternal::connected,this,&ClientProxy::connected);
     connect(m_clientInternal.get(),&ClientInternal::disconnected,this,&ClientProxy::disconnected);
@@ -17,7 +17,7 @@ void ipc::ClientProxy::sendMessage(const IPCMessage &message) {
     m_clientInternal->sendMessage(message);
 }
 
-std::optional<ipc::IPCMessage> ipc::ClientProxy::readMessage() {
+ipc::IPCMessage ipc::ClientProxy::readMessage() {
     return m_clientInternal->readMessage();
 }
 
@@ -32,7 +32,7 @@ bool ipc::ClientProxy::isConnected() const {
 }
 
 
-ipc::ClientInterface *ipc::ClientInterface::create(const QString &UID) {
-    return new ClientProxy(UID);
+std::unique_ptr<ipc::ClientInterface> ipc::ClientInterface::create(const QString &UID) {
+    return std::make_unique<ClientProxy>(UID);
 }
 

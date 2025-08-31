@@ -7,7 +7,7 @@ namespace ipc
 ServerInternal::ServerInternal(const QString &UID)
     : m_isListening{false},
     m_server{new QLocalServer(this)},
-    m_messages{new CircularQueue<std::tuple<QString,IPCMessage>>{}},
+    m_messageHash{},
     m_UID{UID}
 {
     connect(m_server, &QLocalServer::newConnection, this, &ServerInternal::handleNewConnection);
@@ -72,12 +72,16 @@ void ServerInternal::readServer()
         default:
         {
             QString clientUID = m_clientHash.key(client);
-            std::tuple<QString,IPCMessage> clientMessage(clientUID,message);
-            m_messages->enqueue(clientMessage);
-            emit readyRead();
+
+            if (!m_messageHash.contains(clientUID))
+                m_messageHash.insert(clientUID,std::make_shared<CircularQueue<IPCMessage>>());
+
+            std::shared_ptr<CircularQueue<IPCMessage>> clientMessages = m_messageHash[clientUID];
+            clientMessages->enqueue(message);
         }break;
         }
     }
+    emit readyRead();
 }
 
 bool ServerInternal::startServer()
@@ -115,12 +119,14 @@ bool ServerInternal::sendMessage(const QString &clientUID, const IPCMessage &mes
     return client->waitForBytesWritten();
 }
 
-std::optional<std::tuple<QString, IPCMessage>> ServerInternal::readMessage()
+IPCMessage ServerInternal::readMessage(const QString &clientUID)
 {
-    if (m_messages->isEmpty())
-        return std::nullopt;
+    if (!m_messageHash.contains(clientUID))
+        return IPCMessage();
 
-    return m_messages->dequeue();
+    std::shared_ptr<CircularQueue<IPCMessage>> clientMessages = m_messageHash[clientUID];
+    IPCMessage message = clientMessages->dequeue();
+    return message;
 }
 
 }

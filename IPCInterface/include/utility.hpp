@@ -4,6 +4,9 @@
 #include <QString>
 #include <QRegularExpression>
 #include <QRegularExpressionMatchIterator>
+#include <QJsonDocument>
+#include <QJsonObject>
+#include <memory>
 
 #define LOG(...) qInfo(__VA_ARGS__)
 #define WARNING(...) qWarning(__VA_ARGS__)

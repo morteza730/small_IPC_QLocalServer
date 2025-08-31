@@ -4,7 +4,7 @@
 #include "circularQueue.hpp"
 #include "IpcMessage.hpp"
 #include <QLocalSocket>
-#include <optional>
+#include <QTimer>
 
 namespace ipc
 {
@@ -16,27 +16,30 @@ public:
     explicit ClientInternal(const QString &UID);
     ~ClientInternal();
 
-    virtual void connectToServer(const QString &serverUID);
-    virtual bool disconnect();
-    virtual bool isConnected() const {return m_isConnected;}
-    virtual void sendMessage(const IPCMessage &message);
-    virtual std::optional<IPCMessage> readMessage();
+    void connectToServer(const QString &serverUID);
+    bool disconnect();
+    bool isConnected() const {return m_isConnected;}
+    void sendMessage(const IPCMessage &message);
+    IPCMessage readMessage();
 
     QString getUID() const {return m_UID;}
 
 private:
     bool m_isConnected;
     QLocalSocket *m_socket;
+    QTimer *m_connectionTimer;
     std::unique_ptr<CircularQueue<IPCMessage>> m_messages;
 
     QString m_UID;
 
     static constexpr uint16_t CONNECTION_WAIT_TIME = 3000;
     static constexpr uint16_t DISCONNECTION_WAIT_TIME = 3000;
+    static constexpr uint16_t ACK_WAIT_TIME = 1000;
 
 private slots:
     void error(const QLocalSocket::LocalSocketError &socketError);
     void readSocket();
+    void clientConnected();
 
 signals:
     void connected();

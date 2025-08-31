@@ -2,8 +2,8 @@
 
 #include <QByteArray>
 #include <QObject>
-#include "ipcMessage.hpp"
-#include "global.hpp"
+
+#include "ipcExport.hpp"
 
 namespace ipc
 {
@@ -19,6 +19,8 @@ protected:
         : QObject(nullptr),
         m_UID{UID}
     {}
+
+    virtual ~IpcEndpoint() = default;
 
     QString m_UID;
 

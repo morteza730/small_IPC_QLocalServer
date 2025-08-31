@@ -3,7 +3,7 @@
 #include <memory>
 
 #include "IpcEndpoint.hpp"
-#include "global.hpp"
+#include "ipcMessage.hpp"
 
 namespace ipc
 {
@@ -12,18 +12,19 @@ class IPC_EXPORT ClientInterface: public IpcEndpoint
     Q_OBJECT
 
 public:
-    static ClientInterface *create(const QString &UID);
+    static std::unique_ptr<ipc::ClientInterface> create(const QString &UID); // flyweight design pattern
 
     virtual void sendMessage(const IPCMessage &message) = 0;
-    virtual std::optional<IPCMessage> readMessage() = 0;
+    virtual IPCMessage readMessage() = 0;
 
     virtual void connectToServer(const QString &serverUID) = 0;
     virtual bool disconnect() = 0;
     virtual bool isConnected() const = 0;
 
 protected:
-    explicit ClientInterface(const QString &UID);
-    ~ClientInterface();
+    explicit ClientInterface(const QString &UID)
+        : IpcEndpoint{UID}
+    {}
 
 signals:
     void connected();

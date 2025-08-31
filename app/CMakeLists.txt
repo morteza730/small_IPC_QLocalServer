@@ -1,20 +1,25 @@
-add_executable(${APPLICATION_TARGET_NAME}
-    ${CMAKE_CURRENT_SOURCE_DIR}/src/main.cpp
+add_executable(${SERVER_TARGET_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/server.cpp
 )
 
-target_include_directories(${APPLICATION_TARGET_NAME}
-    PUBLIC
-        ${CMAKE_CURRENT_SOURCE_DIR}/include
+target_link_libraries(${SERVER_TARGET_NAME} PUBLIC
+    Qt5::Core
+    ${IPC_TARGET_NAME}
 )
 
-target_link_libraries(${APPLICATION_TARGET_NAME}
-    PUBLIC
-        Qt5::Core
-    PRIVATE
-        ${LIBRARY_TARGET_NAME}
-)
-
-set_target_properties(${APPLICATION_TARGET_NAME} PROPERTIES
+set_target_properties(${SERVER_TARGET_NAME} PROPERTIES
     RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
-    LIBRARY_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/lib"
+)
+
+add_executable(${CLIENT_TARGET_NAME}
+    ${CMAKE_CURRENT_SOURCE_DIR}/src/client.cpp
+)
+
+target_link_libraries(${CLIENT_TARGET_NAME} PUBLIC
+Qt5::Core
+${IPC_TARGET_NAME}
+)
+
+set_target_properties(${CLIENT_TARGET_NAME} PROPERTIES
+    RUNTIME_OUTPUT_DIRECTORY "${CMAKE_BINARY_DIR}/bin"
 )

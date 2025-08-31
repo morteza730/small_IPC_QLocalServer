@@ -1,19 +1,25 @@
 #include "clientInternal.hpp"
 #include "utility.hpp"
+#include "config.h"
 
 namespace ipc
 {
 
 ClientInternal::ClientInternal(const QString &UID)
     : m_socket{new QLocalSocket(this)},
+    m_connectionTimer{new QTimer(this)},
     m_isConnected{false},
-    m_messages{},
+    m_messages{std::make_unique<CircularQueue<IPCMessage>>()},
     m_UID{UID}
 {
-    connect(m_socket, &QLocalSocket::connected, this, &ClientInternal::connected);
+    connect(m_socket, &QLocalSocket::connected, this, &ClientInternal::clientConnected);
     connect(m_socket, &QLocalSocket::disconnected, this, &ClientInternal::disconnected);
     connect(m_socket, &QLocalSocket::readyRead, this, &ClientInternal::readSocket);
     connect(m_socket, &QLocalSocket::errorOccurred, this, &ClientInternal::error);
+
+    if (!isVerificationRequired())
+        m_isConnected = true;
+    
 }
 
 ClientInternal::~ClientInternal()
@@ -56,19 +62,21 @@ void ClientInternal::connectToServer(const QString &serverUID)
 
     m_socket->abort();
     m_socket->connectToServer(serverUID);
+}
 
-    if (!m_socket->waitForConnected(CONNECTION_WAIT_TIME))
-        return;
-
+void ClientInternal::clientConnected()
+{
     IPCMessage regMSG(CommandMode::Reg,getUID());
-
     sendMessage(regMSG);
+    emit connected();
 }
 
 bool ClientInternal::disconnect()
 {
     if (!m_socket)
         return false;
+
+    m_connectionTimer->stop();
 
     if (!m_isConnected)
         return true;
@@ -85,12 +93,10 @@ void ClientInternal::sendMessage(const IPCMessage &message)
     m_socket->flush();
 }
 
-std::optional<IPCMessage> ClientInternal::readMessage()
+IPCMessage ClientInternal::readMessage()
 {
-    if (m_messages->isEmpty())
-        return std::nullopt;
-
-    return m_messages->dequeue();
+    IPCMessage message = m_messages->dequeue();
+    return message;
 }
 
 }

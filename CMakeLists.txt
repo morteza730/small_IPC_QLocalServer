@@ -6,15 +6,17 @@ set(CMAKE_AUTOUIC ON)
 set(CMAKE_AUTOMOC ON)
 set(CMAKE_AUTORCC ON)
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 14)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
+set(CMAKE_WINDOWS_EXPORT_ALL_SYMBOLS ON)
 
-set(LIBRARY_TARGET_NAME ipcInterface)
-set(APPLICATION_TARGET_NAME ipcTester)
+set(IPC_TARGET_NAME ipcInterface)
+set(SERVER_TARGET_NAME server)
+set(CLIENT_TARGET_NAME client)
 
-find_package(Qt5 REQUIRED COMPONENTS Core Xml Network Widgets)
+find_package(Qt5 REQUIRED COMPONENTS Core Network)
+
+include(GNUInstallDirs)
 
 add_subdirectory(IPCInterface)
 add_subdirectory(app)
-
-include(GNUInstallDirs)

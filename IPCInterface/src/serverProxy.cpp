@@ -1,20 +1,23 @@
 #include "serverProxy.hpp"
+#include "serverInternal.hpp"
 
 ipc::ServerProxy::ServerProxy(const QString &UID)
     : ServerInterface{UID},
-    m_serverInternal{new ServerInternal{UID}}
+    m_serverInternal{std::make_unique<ServerInternal>(UID)}
 {
     connect(m_serverInternal.get(),&ServerInternal::clientConnected,this,&ServerProxy::clientConnected);
     connect(m_serverInternal.get(),&ServerInternal::clientDisconnected,this,&ServerProxy::clientDisconnected);
     connect(m_serverInternal.get(),&ServerInternal::readyRead,this,&ServerProxy::readyRead);
 }
 
+ipc::ServerProxy::~ServerProxy() = default;
+
 bool ipc::ServerProxy::sendMessage(const QString &clientUID, const IPCMessage &message) {
     return m_serverInternal->sendMessage(clientUID,message);
 }
 
-std::optional<std::tuple<QString, ipc::IPCMessage>> ipc::ServerProxy::readMessage() {
-    return m_serverInternal->readMessage();
+ipc::IPCMessage ipc::ServerProxy::readMessage(const QString &clientUID) {
+    return m_serverInternal->readMessage(clientUID);
 }
 
 bool ipc::ServerProxy::startServer() {
@@ -27,6 +30,6 @@ bool ipc::ServerProxy::isListening() const {
     return m_serverInternal->isListening();
 }
 
-ipc::ServerInterface *ipc::ServerInterface::create(const QString &UID) {
-    return new ServerProxy(UID);
+std::unique_ptr<ipc::ServerInterface> ipc::ServerInterface::create(const QString &UID) {
+    return std::make_unique<ServerProxy>(UID);
 }
