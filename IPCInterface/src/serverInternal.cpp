@@ -110,13 +110,18 @@ void ServerInternal::stopServer()
 bool ServerInternal::sendMessage(const QString &clientUID, const IPCMessage &message)
 {
     QByteArray block = message.toJson();
-    QLocalSocket* client = m_clientHash[clientUID];
 
-    if (!client || !client->isOpen())
+    if (!m_clientHash.isEmpty() && !m_clientHash.contains(clientUID))
         return -1;
 
-    client->write(block);
-    return client->waitForBytesWritten();
+    QLocalSocket* client = m_clientHash[clientUID];
+
+    if (client && client->isOpen())
+    {
+        client->write(block);
+        return client->waitForBytesWritten();
+    }
+    return -1;
 }
 
 IPCMessage ServerInternal::readMessage(const QString &clientUID)
