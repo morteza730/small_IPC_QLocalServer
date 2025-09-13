@@ -111,7 +111,10 @@ bool ServerInternal::sendMessage(const QString &clientUID, const IPCMessage &mes
 {
     QByteArray block = message.toJson();
 
-    if (!m_clientHash.isEmpty() && !m_clientHash.contains(clientUID))
+    if (m_clientHash.isEmpty())
+        return -1;
+
+    if (!m_clientHash.contains(clientUID))
         return -1;
 
     QLocalSocket* client = m_clientHash[clientUID];
