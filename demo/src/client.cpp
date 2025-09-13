@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include <QObject>
 
-#include "clientInterface.hpp"
+#include "IPCInterface/clientInterface.hpp"
 
 using namespace ipc;
 

@@ -1,7 +1,7 @@
 #include <QCoreApplication>
 #include <QObject>
 #include <QTimer>
-#include "serverInterface.hpp"
+#include "IPCInterface/serverInterface.hpp"
 #include <iostream>
 
 using namespace ipc;

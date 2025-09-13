@@ -1,3 +1,7 @@
+
+set(SERVER_TARGET_NAME server)
+set(CLIENT_TARGET_NAME client)
+
 add_executable(${SERVER_TARGET_NAME}
     ${CMAKE_CURRENT_SOURCE_DIR}/src/server.cpp
 )
