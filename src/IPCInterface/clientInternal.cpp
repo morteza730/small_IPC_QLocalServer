@@ -67,12 +67,12 @@ void ClientInternal::connectToServer(const QString &serverUID)
 bool ClientInternal::disconnect()
 {
     if (!m_socket)
-    return false;
+        return false;
     
     m_connectionTimer->stop();
     
     if (!m_isConnected)
-    return true;
+        return true;
     
     m_socket->disconnectFromServer();
     m_isConnected = !(m_socket->waitForDisconnected(DISCONNECTION_WAIT_TIME));
@@ -96,6 +96,13 @@ void ClientInternal::clientDisconnected()
 void ClientInternal::sendMessage(const IPCMessage &message)
 {
     QByteArray block = message.toJson();
+
+    if (!m_socket)
+        return;
+
+    if (!m_isConnected)
+        return;
+
     m_socket->write(block);
     m_socket->flush();
 }
