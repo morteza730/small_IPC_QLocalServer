@@ -73,12 +73,17 @@ bool ClientInternal::disconnect()
     
     if (!m_isConnected)
         return true;
-        
+
     IPCMessage regMSG(CommandMode::Dereg,getUID());
     sendMessage(regMSG);
 
     m_socket->disconnectFromServer();
-    m_isConnected = !(m_socket->waitForDisconnected(DISCONNECTION_WAIT_TIME));
+    
+    if (m_socket->state() != QLocalSocket::UnconnectedState)
+        m_isConnected = !(m_socket->waitForDisconnected(DISCONNECTION_WAIT_TIME));
+    else
+        m_isConnected = false;
+
     return m_isConnected;
 }
 
