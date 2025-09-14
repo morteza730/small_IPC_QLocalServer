@@ -73,7 +73,10 @@ bool ClientInternal::disconnect()
     
     if (!m_isConnected)
         return true;
-    
+        
+    IPCMessage regMSG(CommandMode::Dereg,getUID());
+    sendMessage(regMSG);
+
     m_socket->disconnectFromServer();
     m_isConnected = !(m_socket->waitForDisconnected(DISCONNECTION_WAIT_TIME));
     return m_isConnected;
@@ -88,8 +91,6 @@ void ClientInternal::clientConnected()
 
 void ClientInternal::clientDisconnected()
 {
-    IPCMessage regMSG(CommandMode::Dereg,getUID());
-    sendMessage(regMSG);
     emit disconnected();
 }
 
