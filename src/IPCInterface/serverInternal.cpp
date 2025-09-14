@@ -69,6 +69,13 @@ void ServerInternal::readServer()
 
             m_clientHash.insert(message.data(),client);
         } break;
+        case CommandMode::Dereg:
+        {
+            if (!m_clientHash.contains(message.data()))
+                continue;
+            
+            m_clientHash.remove(message.data());
+        } break;
         default:
         {
             QString clientUID = m_clientHash.key(client);
