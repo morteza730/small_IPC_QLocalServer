@@ -24,6 +24,7 @@ ClientInternal::ClientInternal(const QString &UID)
 
 ClientInternal::~ClientInternal()
 {
+    this->disconnect();
     m_socket->disconnect(this);
     m_socket->close();
 }
@@ -78,7 +79,7 @@ bool ClientInternal::disconnect()
     sendMessage(regMSG);
 
     m_socket->disconnectFromServer();
-    
+
     if (m_socket->state() != QLocalSocket::UnconnectedState)
         m_isConnected = !(m_socket->waitForDisconnected(DISCONNECTION_WAIT_TIME));
     else
