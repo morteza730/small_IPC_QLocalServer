@@ -13,7 +13,7 @@ ClientInternal::ClientInternal(const QString &UID)
     m_UID{UID}
 {
     connect(m_socket, &QLocalSocket::connected, this, &ClientInternal::clientConnected);
-    connect(m_socket, &QLocalSocket::disconnected, this, &ClientInternal::disconnected);
+    connect(m_socket, &QLocalSocket::disconnected, this, &ClientInternal::clientDisconnected);
     connect(m_socket, &QLocalSocket::readyRead, this, &ClientInternal::readSocket);
     connect(m_socket, &QLocalSocket::errorOccurred, this, &ClientInternal::error);
 
@@ -64,6 +64,21 @@ void ClientInternal::connectToServer(const QString &serverUID)
     m_socket->connectToServer(serverUID);
 }
 
+bool ClientInternal::disconnect()
+{
+    if (!m_socket)
+    return false;
+    
+    m_connectionTimer->stop();
+    
+    if (!m_isConnected)
+    return true;
+    
+    m_socket->disconnectFromServer();
+    m_isConnected = !(m_socket->waitForDisconnected(DISCONNECTION_WAIT_TIME));
+    return m_isConnected;
+}
+
 void ClientInternal::clientConnected()
 {
     IPCMessage regMSG(CommandMode::Reg,getUID());
@@ -71,19 +86,11 @@ void ClientInternal::clientConnected()
     emit connected();
 }
 
-bool ClientInternal::disconnect()
+void ClientInternal::clientDisconnected()
 {
-    if (!m_socket)
-        return false;
-
-    m_connectionTimer->stop();
-
-    if (!m_isConnected)
-        return true;
-
-    m_socket->disconnectFromServer();
-    m_isConnected = !(m_socket->waitForDisconnected(DISCONNECTION_WAIT_TIME));
-    return m_isConnected;
+    IPCMessage regMSG(CommandMode::Dereg,getUID());
+    sendMessage(regMSG);
+    emit disconnected();
 }
 
 void ClientInternal::sendMessage(const IPCMessage &message)

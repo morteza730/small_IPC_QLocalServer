@@ -24,7 +24,8 @@ enum class CommandMode
     AFC,
     TMSVersion,
     BCR,
-    Reg
+    Reg,
+    Dereg,
 };
 
 namespace ipc

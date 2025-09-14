@@ -40,6 +40,7 @@ private slots:
     void error(const QLocalSocket::LocalSocketError &socketError);
     void readSocket();
     void clientConnected();
+    void clientDisconnected();
 
 signals:
     void connected();
