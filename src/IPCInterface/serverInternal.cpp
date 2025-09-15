@@ -147,6 +147,10 @@ IPCMessage ServerInternal::readMessage(const QString &clientUID)
 int ServerInternal::getMessageCount(const QString &clientUID) const
 {
     std::shared_ptr<CircularQueue<IPCMessage>> clientMessages = m_messageHash[clientUID];
+    
+    if (!clientMessages)
+        return 0;
+
     return clientMessages->size();
 }
 
