@@ -13,11 +13,12 @@ class ServerProxy: public ServerInterface
 public:
     explicit ServerProxy(const QString &UID);
     ~ServerProxy();
-    bool sendMessage(const QString &clientUID,const IPCMessage &message) final;
-    IPCMessage readMessage(const QString &clientUID) final;
-    bool startServer() final;
-    void stopServer() final;
-    bool isListening() const final;
+    virtual bool sendMessage(const QString &clientUID,const IPCMessage &message) override final;
+    IPCMessage readMessage(const QString &clientUID) override final;
+    virtual int getMessageCount(const QString &clientUID) const override final;
+    virtual bool startServer() override final;
+    virtual void stopServer() override final;
+    virtual bool isListening() const override final;
 
 private:
     std::unique_ptr<ServerInternal> m_serverInternal;

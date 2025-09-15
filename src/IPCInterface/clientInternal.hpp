@@ -17,10 +17,11 @@ public:
     ~ClientInternal();
 
     void connectToServer(const QString &serverUID);
-    bool disconnect();
+    bool disconnect(); // better call it manually in the caller
     bool isConnected() const {return m_isConnected;}
     void sendMessage(const IPCMessage &message);
     IPCMessage readMessage();
+    int getMessageCount() const;
 
     QString getUID() const {return m_UID;}
 

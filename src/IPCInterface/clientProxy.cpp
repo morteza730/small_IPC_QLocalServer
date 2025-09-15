@@ -21,6 +21,11 @@ ipc::IPCMessage ipc::ClientProxy::readMessage() {
     return m_clientInternal->readMessage();
 }
 
+int ipc::ClientProxy::getMessageCount() const
+{
+    return m_clientInternal->getMessageCount();
+}
+
 void ipc::ClientProxy::connectToServer(const QString &serverUID) {m_clientInternal->connectToServer(serverUID);}
 
 bool ipc::ClientProxy::disconnect() {

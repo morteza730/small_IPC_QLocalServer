@@ -120,5 +120,10 @@ IPCMessage ClientInternal::readMessage()
     return message;
 }
 
+int ClientInternal::getMessageCount() const
+{
+    return m_messages->size();
+}
+
 }
 

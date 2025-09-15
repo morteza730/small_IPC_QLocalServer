@@ -19,6 +19,7 @@ public:
     void stopServer();
     bool sendMessage(const QString &clientUID,const IPCMessage &message);
     IPCMessage readMessage(const QString &clientUID);
+    int getMessageCount(const QString &clientUID) const;
     bool isListening() const {return m_isListening;}
 
     QString getUID() const {return m_UID;}

@@ -12,11 +12,12 @@ class ClientProxy: public ClientInterface
 
 public:
     explicit ClientProxy(const QString &UID);
-    virtual void sendMessage(const IPCMessage &message) final;
-    virtual IPCMessage readMessage() final;
-    virtual void connectToServer(const QString &serverUID) final;
-    virtual bool disconnect() final;
-    virtual bool isConnected() const final;
+    virtual void sendMessage(const IPCMessage &message) override final;
+    virtual IPCMessage readMessage() override final;
+    virtual int getMessageCount() const override final;
+    virtual void connectToServer(const QString &serverUID) override final;
+    virtual bool disconnect() override final;
+    virtual bool isConnected() const override final;
 
 private:
     std::unique_ptr<ClientInternal> m_clientInternal;

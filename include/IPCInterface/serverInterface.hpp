@@ -15,6 +15,7 @@ public:
 
     virtual bool sendMessage(const QString &clientUID,const IPCMessage &message)  = 0;
     virtual IPCMessage readMessage(const QString &clientUID)  = 0;
+    virtual int getMessageCount(const QString &clientUID) const = 0;
 
     virtual bool startServer()  = 0;
     virtual void stopServer() = 0;
