@@ -29,6 +29,6 @@ protected:
 signals:
     void clientConnected();
     void clientDisconnected();
-    void readyRead();
+    void readyRead(const QString &uid);
 };
 }

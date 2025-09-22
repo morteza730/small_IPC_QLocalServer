@@ -43,7 +43,7 @@ private slots:
 signals:
     void clientConnected();
     void clientDisconnected();
-    void readyRead();
+    void readyRead(const QString &uid);
     void errorOccurred(const QString &error);
 
 };

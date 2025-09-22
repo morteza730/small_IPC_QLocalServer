@@ -85,10 +85,11 @@ void ServerInternal::readServer()
 
             std::shared_ptr<CircularQueue<IPCMessage>> clientMessages = m_messageHash[clientUID];
             clientMessages->enqueue(message);
+
+            emit readyRead(clientUID);
         }break;
         }
     }
-    emit readyRead();
 }
 
 bool ServerInternal::startServer()

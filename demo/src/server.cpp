@@ -12,17 +12,17 @@ int main(int argc, char *argv[])
 
     std::unique_ptr<ServerInterface> server = ServerInterface::create("server");
 
-    QObject::connect(server.get(),&ServerInterface::readyRead,&app,[&](){
-        IPCMessage msg = server->readMessage("client");
+    QObject::connect(server.get(), &ServerInterface::readyRead, &app, [&](const QString &uid) {
+        IPCMessage msg = server->readMessage(uid);
         qDebug() << msg.data();
-    },Qt::AutoConnection);
+    }, Qt::AutoConnection);
 
     server->startServer();
 
-    IPCMessage sampleJson(CommandMode::Info,"A message from server");
-    QTimer::singleShot(5000,[&](){server->sendMessage("client",sampleJson);
-    std::cout << "message was sent." << std::endl;});
+    IPCMessage sampleJson(CommandMode::Info, "A message from server");
+    QTimer::singleShot(5000, [&]()
+                       {server->sendMessage("client",sampleJson);
+    std::cout << "message was sent." << std::endl; });
 
     return app.exec();
 }
-
